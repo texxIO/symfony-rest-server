@@ -26,3 +26,10 @@ Install
     
 7. Run using `php bin/console server:run` or with a web server .
 
+TODO
+------
+- Implement validation
+- Unit Tests
+- Authentication 
+- Dockerize
+

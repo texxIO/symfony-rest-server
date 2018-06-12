@@ -36,7 +36,7 @@ class OffersController extends Controller
             $offer = $repository->find($offerId);
             return $this->json($offer, 200);
         }
-        return $this->json([], 404);
+        return $this->json(['status'=>'Fetch error , check API server log'], 404);
     }
 
     /**
@@ -72,7 +72,7 @@ class OffersController extends Controller
         }
         catch ( \Exception $e )
         {
-            return $this->json([], 404);
+            return $this->json(['status'=>'Add error , check API server log'], 404);
         }
 
 
@@ -96,13 +96,41 @@ class OffersController extends Controller
             }
             catch ( \Exception $e )
             {
-                return $this->json([], 404);
+                return $this->json(['status'=>'Delete error , check API server log'], 404);
             }
 
 
         }
 
-        return $this->json([], 404);
+        return $this->json(['status'=>'The offer ID is missing or is not valid'], 404);
+    }
+
+    /**
+     * @param Request $request
+     * @Route("api/update/{offerId}", methods={"PUT", "PATCH", "GET"})
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function updateAction( int $offerId, Request $request )
+    {
+        if ( !is_int($offerId) )
+        {
+            return $this->json(['status'=>'Fetch error , check API server log'], 404);
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $offer = $this->getDoctrine()
+            ->getRepository(Offer::class)
+            ->find($offerId);
+
+        $offer->setTitle($request->request->get('title'));
+        $offer->setDescription($request->request->get('description'));
+        $offer->setEmail($request->request->get('email'));
+        $offer->setImageUrl($request->request->get('image_url'));
+
+        $entityManager->flush();
+
+        return $this->json(['status'=>'Offer Updated'], 200);
+
     }
 
 
