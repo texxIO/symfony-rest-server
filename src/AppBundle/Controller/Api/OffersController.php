@@ -26,7 +26,7 @@ class OffersController extends Controller
      * @param int $offerId
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @Route("/api/offers/{offerId}")
+     * @Route("/api/offers/{offerId}", methods={"GET"})
      */
     public function getByIdAction( int $offerId, Request $request)
     {
@@ -41,13 +41,51 @@ class OffersController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/api/offer")
+     * @Route("/api/offer", methods={"POST"})
      * @return string
      */
     public function addAction( Request $request )
     {
-        $data = $request->post();
-        return json_encode($data);
+        /*
+        $offerData['title'] = $request->request->get('title');
+        $offerData['description'] = $request->request->get('description');
+        $offerData['email'] = $request->request->get('email');
+        $offerData['image_url'] = $request->request->get('image_url');
+        $offerData['creation_date'] = new \DateTime("now");
+        */
+
+        try
+        {
+            $entityManager = $this->getDoctrine()->getManager();
+
+            $offer = new Offer();
+            $offer->setTitle($request->request->get('title'));
+            $offer->setDescription($request->request->get('description'));
+            $offer->setEmail($request->request->get('email'));
+            $offer->setImageUrl($request->request->get('image_url'));
+            $offer->setCreationDate(new \DateTime("now"));
+
+            $entityManager->persist($offer);
+            $entityManager->flush();
+
+            return $this->json(['offerId'=>$offer->getId()], 200);
+        }
+        catch ( \Exception $e )
+        {
+            return $this->json([], 404);
+        }
+
+
+    }
+
+    public function deleteAction( Request $request )
+    {
+        $offerId = $request->request->get('offerId');
+
+        if ( isset($offerId) && is_int($offerId) && intval($offerId) > 0 ) {
+            $repository = $this->getDoctrine()->getRepository(Offer::class);
+            //$offer = $repository->delete($);
+        }
     }
 
 

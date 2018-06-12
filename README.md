@@ -23,4 +23,6 @@ Install
 6. Create the tables:
  
     `php bin/console doctrine:schema:update --force`
+    
+7. Run using `php bin/console server:run` or with a web server .
 
