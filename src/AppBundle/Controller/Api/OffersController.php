@@ -78,14 +78,31 @@ class OffersController extends Controller
 
     }
 
-    public function deleteAction( Request $request )
+    /**
+     * @param Request $request
+     * @Route("/api/offers/delete/{offerId}",requirements={"offerId"="\d+"},  methods={"GET"})
+     * @return string
+     */
+    public function deleteAction( int $offerId )
     {
-        $offerId = $request->request->get('offerId');
 
         if ( isset($offerId) && is_int($offerId) && intval($offerId) > 0 ) {
-            $repository = $this->getDoctrine()->getRepository(Offer::class);
-            //$offer = $repository->delete($);
+            try {
+                $entityManager = $this->getDoctrine()->getManager();
+                $offer = $entityManager->getRepository(Offer::class)->find($offerId);
+                $entityManager->remove($offer);
+                $entityManager->flush();
+                return $this->json([$offer], 200);
+            }
+            catch ( \Exception $e )
+            {
+                return $this->json([], 404);
+            }
+
+
         }
+
+        return $this->json([], 404);
     }
 
 
