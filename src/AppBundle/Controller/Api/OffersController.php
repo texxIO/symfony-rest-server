@@ -19,9 +19,9 @@
             try {
                 $repository = $this->getDoctrine()->getRepository(Offer::class);
                 $offers = $repository->findAll();
-                return $this->json($offers, 200);
+                return $this->json($offers, Response::HTTP_OK);
             } catch (\Exception $e) {
-                return $this->json(['status' => 'Fetch error , check API server log'], 404);
+                return $this->json(['status' => 'Fetch error , check API server log'], Response::HTTP_NOT_FOUND);
             }
 
         }
@@ -37,9 +37,9 @@
             try {
                 $repository = $this->getDoctrine()->getRepository(Offer::class);
                 $offer = $repository->find($offerId);
-                return $this->json($offer, 200);
+                return $this->json($offer, Response::HTTP_OK);
             } catch (\Exception $e) {
-                return $this->json(['status' => 'Fetch error , check API server log'], 404);
+                return $this->json(['status' => 'Fetch error , check API server log'], Response::HTTP_NOT_FOUND);
             }
 
         }
@@ -65,9 +65,9 @@
                 $entityManager->persist($offer);
                 $entityManager->flush();
 
-                return $this->json(['offerId' => $offer->getId()], 200);
+                return $this->json(['offerId' => $offer->getId()], Response::HTTP_CREATED);
             } catch (\Exception $e) {
-                return $this->json(['status' => 'Add error , check API server log'], 404);
+                return $this->json(['status' => 'Add error , check API server log'], Response::HTTP_NOT_FOUND);
             }
 
 
@@ -87,15 +87,15 @@
                     $offer = $entityManager->getRepository(Offer::class)->find($offerId);
                     $entityManager->remove($offer);
                     $entityManager->flush();
-                    return $this->json([$offer], 200);
+                    return $this->json([$offer], Response::HTTP_ACCEPTED);
                 } catch (\Exception $e) {
-                    return $this->json(['status' => 'Delete error , check API server log'], 404);
+                    return $this->json(['status' => 'Delete error , check API server log'], Response::HTTP_NOT_FOUND);
                 }
 
 
             }
 
-            return $this->json(['status' => 'The offer ID is missing or is not valid'], 404);
+            return $this->json(['status' => 'The offer ID is missing or is not valid'], Response::HTTP_NOT_FOUND);
         }
 
         /**
@@ -106,7 +106,7 @@
         public function updateAction(int $offerId, Request $request)
         {
             if (!is_int($offerId)) {
-                return $this->json(['status' => 'Fetch error , check API server log'], 404);
+                return $this->json(['status' => 'Fetch error , check API server log'], Response::HTTP_NOT_FOUND);
             }
 
             try {
@@ -122,10 +122,10 @@
 
                 $entityManager->flush();
 
-                return $this->json(['status' => 'Offer updated'], 200);
+                return $this->json(['status' => 'Offer updated'], Response::HTTP_OK);
 
             } catch (\Exception $e) {
-                return $this->json(['status' => 'Offer update failed'], 404);
+                return $this->json(['status' => 'Offer update failed'], Response::HTTP_NOT_FOUND);
             }
 
         }
