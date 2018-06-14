@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Offer
@@ -23,35 +24,50 @@ class Offer
 
     /**
      * @var string
-     *
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 100,
+     *      minMessage = "The Title must be at least {{ limit }} characters long",
+     *      maxMessage = "The Title cannot be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(name="title", type="string", length=100)
      */
     private $title;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="description", type="text")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 500,
+     *      minMessage = "The Description must be at least {{ limit }} characters long",
+     *      maxMessage = "The Description cannot be longer than {{ limit }} characters"
+     * )
+     * @ORM\Column(name="description", type="string", length=500)
      */
     private $description;
 
     /**
      * @var string
-     *
+     * @Assert\Email()
      * @ORM\Column(name="email", type="string", length=100, unique=true)
      */
     private $email;
 
     /**
      * @var string
-     *
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 200,
+     *      minMessage = "The Image Url must be at least {{ limit }} characters long",
+     *      maxMessage = "The Image Url cannot be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(name="image_url", type="string", length=200)
      */
     private $imageUrl;
 
     /**
      * @var \DateTime
-     *
+     * @Assert\DateTime()
      * @ORM\Column(name="creation_date", type="datetime")
      */
     private $creationDate;

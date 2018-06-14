@@ -7,6 +7,7 @@
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\HttpFoundation\Request;
     use AppBundle\Entity\Offer;
+    use Symfony\Component\Validator\Validator\ValidatorInterface;
 
     class OffersController extends Controller
     {
@@ -49,7 +50,7 @@
          * @Route("/api/offer", methods={"POST"})
          * @return string
          */
-        public function addAction(Request $request)
+        public function addAction(ValidatorInterface $validator, Request $request)
         {
 
             try {
@@ -61,6 +62,19 @@
                 $offer->setEmail($request->request->get('email'));
                 $offer->setImageUrl($request->request->get('image_url'));
                 $offer->setCreationDate(new \DateTime("now"));
+
+                $errors = $validator->validate($offer);
+
+                if (count($errors) > 0) {
+                    /*
+                     * Uses a __toString method on the $errors variable which is a
+                     * ConstraintViolationList object. This gives us a nice string
+                     * for debugging.
+                     */
+                    //$errorsString = (string) $errors;
+
+                    return $this->json(['status' => 'Add error , check API server log', 'errors'=>$errors], Response::HTTP_NOT_FOUND);
+                }
 
                 $entityManager->persist($offer);
                 $entityManager->flush();
