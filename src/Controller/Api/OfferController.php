@@ -4,9 +4,11 @@
 
     use App\Entity\Offer;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+    use Symfony\Component\HttpFoundation\JsonResponse;
     use Symfony\Component\Routing\Annotation\Route;
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\HttpFoundation\Request;
+    use Exception;
 
 
     class OfferController extends AbstractController
@@ -21,7 +23,7 @@
                 $repository = $this->getDoctrine()->getRepository(Offer::class);
                 $offers = $repository->findAll();
                 return $this->json($offers, Response::HTTP_OK);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $this->json(['status' => 'Fetch error , check API server log'], Response::HTTP_NOT_FOUND);
             }
 
@@ -29,8 +31,7 @@
 
         /**
          * @param int $offerId
-         * @param Request $request
-         * @return \Symfony\Component\HttpFoundation\JsonResponse
+         * @return JsonResponse
          * @Route("/api/offers/{offerId}", methods={"GET"})
          */
         public function getByIdAction(int $offerId)
@@ -39,7 +40,7 @@
                 $repository = $this->getDoctrine()->getRepository(Offer::class);
                 $offer = $repository->find($offerId);
                 return $this->json($offer, 200);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $this->json(['status' => 'Fetch error , check API server log'], 404);
             }
 
@@ -67,7 +68,7 @@
                 $entityManager->flush();
 
                 return $this->json(['offerId' => $offer->getId()], 200);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $this->json(['status' => 'Add error , check API server log'], 404);
             }
 
@@ -89,7 +90,7 @@
                     $entityManager->remove($offer);
                     $entityManager->flush();
                     return $this->json([$offer], 200);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     return $this->json(['status' => 'Delete error , check API server log'], 404);
                 }
 
@@ -102,12 +103,12 @@
         /**
          * @param Request $request
          * @Route("api/update/{offerId}", methods={"PUT", "PATCH", "GET"})
-         * @return \Symfony\Component\HttpFoundation\JsonResponse
+         * @return JsonResponse
          */
-        public function updateAction(int $offerId, Request $request)
+        public function updateAction(Request $request, int $offerId )
         {
             if (!is_int($offerId)) {
-                return $this->json(['status' => 'Fetch error , check API server log'], 404);
+                return $this->json(['status' => 'Fetch error , check API server log'], Response::HTTP_NOT_FOUND);
             }
 
             try {
@@ -123,10 +124,10 @@
 
                 $entityManager->flush();
 
-                return $this->json(['status' => 'Offer updated'], 200);
+                return $this->json(['status' => 'Offer updated'], Response::HTTP_OK);
 
-            } catch (\Exception $e) {
-                return $this->json(['status' => 'Offer update failed'], 404);
+            } catch (Exception $e) {
+                return $this->json(['status' => 'Offer update failed'], Response::HTTP_NOT_FOUND);
             }
 
         }
